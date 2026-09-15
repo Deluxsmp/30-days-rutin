@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SSC 2027 • 30 Day Study Planner</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Inter,Arial,sans-serif;
+  background:#060913;
+  color:#eef2ff;
+  min-height:100vh;
+}
+button{font:inherit}
+.container{max-width:1050px;margin:auto;padding:22px}
+
+header{
+  background:linear-gradient(135deg,#10182b,#0b1020);
+  border:1px solid #1d2942;
+  border-radius:24px;
+  padding:28px;
+  margin-bottom:20px;
+}
+.badge{
+  display:inline-block;
+  background:#171f35;
+  color:#facc15;
+  border:1px solid #303b59;
+  padding:7px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:15px;
+}
+h1{font-size:32px;margin-bottom:8px}
+.subtitle{color:#929db5;font-size:14px}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:22px;
+}
+.stat{
+  background:#0d1220;
+  border:1px solid #1c263c;
+  padding:16px;
+  border-radius:16px;
+}
+.stat b{font-size:24px}
+.stat span{
+  display:block;
+  color:#7f8ba5;
+  font-size:12px;
+  margin-top:4px
+}
+
+.section{
+  background:#0d1220;
+  border:1px solid #1c263c;
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:18px;
+}
+.section h2{font-size:19px;margin-bottom:15px}
+
+.progress{
+  height:9px;
+  background:#171e2f;
+  border-radius:99px;
+  overflow:hidden;
+}
+.progress div{
+  height:100%;
+  width:0%;
+  background:#facc15;
+  transition:.3s;
+}
+
+.day-nav{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:5px;
+}
+.day-btn{
+  min-width:72px;
+  padding:10px 12px;
+  background:#11182a;
+  color:#aab4c9;
+  border:1px solid #202b43;
+  border-radius:12px;
+  cursor:pointer;
+}
+.day-btn.active{
+  background:#facc15;
+  color:#111;
+  border-color:#facc15;
+  font-weight:800;
+}
+.day-btn.done{border-color:#4ade80}
+
+.schedule{
+  display:grid;
+  gap:10px;
+}
+.subject{
+  border:1px solid #202b43;
+  background:#0a0f1c;
+  border-radius:15px;
+  padding:15px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+.icon{
+  width:42px;height:42px;
+  display:grid;place-items:center;
+  border-radius:12px;
+  background:#151d31;
+  font-size:20px;
+}
+.subject h3{font-size:15px}
+.subject p{font-size:12px;color:#7f8ba5;margin-top:4px}
+.time{
+  margin-left:auto;
+  color:#facc15;
+  font-weight:700;
+  font-size:12px;
+  white-space:nowrap;
+}
+
+.chapter{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border:1px solid #202b43;
+  border-radius:13px;
+  margin-top:9px;
+  background:#0a0f1c;
+}
+.chapter input{
+  width:19px;
+  height:19px;
+  accent-color:#facc15;
+}
+.chapter label{font-size:13px}
+.priority{
+  margin-left:auto;
+  font-size:10px;
+  padding:5px 8px;
+  border-radius:7px;
+  font-weight:800;
+}
+.must{background:#33231e;color:#fb923c}
+.imp{background:#1e293b;color:#93c5fd}
+
+.timer{text-align:center}
+.timer-display{
+  font-size:54px;
+  font-weight:800;
+  letter-spacing:2px;
+  margin:10px 0 18px;
+}
+.timer button{
+  background:#facc15;
+  color:#111;
+  border:0;
+  padding:11px 20px;
+  border-radius:11px;
+  cursor:pointer;
+  font-weight:800;
+  margin:4px;
+}
+.timer button.secondary{
+  background:#182137;
+  color:#dce4f5;
+}
+
+.target{
+  width:100%;
+  min-height:90px;
+  resize:vertical;
+  background:#090e1a;
+  color:#eef2ff;
+  border:1px solid #202b43;
+  border-radius:13px;
+  padding:13px;
+  outline:none;
+}
+.target:focus{border-color:#facc15}
+
+.reset{
+  width:100%;
+  background:#151c2d;
+  color:#9aa7bf;
+  border:1px solid #263149;
+  padding:12px;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+@media(max-width:650px){
+  .container{padding:13px}
+  header{padding:21px;border-radius:19px}
+  h1{font-size:25px}
+  .stats{grid-template-columns:1fr 1fr}
+  .stat:last-child{grid-column:span 2}
+  .time{font-size:10px}
+  .timer-display{font-size:43px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+  <div class="badge">SSC 2027 • 30 DAY MISSION</div>
+  <h1>Study. Focus. Improve.</h1>
+  <p class="subtitle">
+    Physics • Chemistry • Higher Math — 30 days of focused preparation
+  </p>
+
+  <div class="stats">
+    <div class="stat">
+      <b id="dayStat">1/30</b>
+      <span>Current Day</span>
+    </div>
+    <div class="stat">
+      <b id="completeStat">0%</b>
+      <span>Overall Progress</span>
+    </div>
+    <div class="stat">
+      <b id="chapterStat">0</b>
+      <span>Chapters Done</span>
+    </div>
+  </div>
+</header>
+
+<div class="section">
+  <h2>Overall Progress</h2>
+  <div class="progress">
+    <div id="progressBar"></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Select Day</h2>
+  <div class="day-nav" id="dayNav"></div>
+</div>
+
+<div class="section">
+  <h2 id="dayTitle">Day 1</h2>
+  <div class="schedule" id="schedule"></div>
+</div>
+
+<div class="section">
+  <h2>📚 Today's Chapters</h2>
+  <div id="chapters"></div>
+</div>
+
+<div class="section">
+  <h2>📝 Daily Target</h2>
+  <textarea
+    id="target"
+    class="target"
+    placeholder="আজকে কী কী শেষ করবে লিখে রাখো..."
+  ></textarea>
+</div>
+
+<div class="section timer">
+  <h2>⏱️ Focus Timer</h2>
+  <div class="timer-display" id="timer">60:00</div>
+  <button onclick="startTimer()">Start</button>
+  <button class="secondary" onclick="pauseTimer()">Pause</button>
+  <button class="secondary" onclick="resetTimer()">Reset</button>
+</div>
+
+<div class="section">
+  <button class="reset" onclick="resetAll()">
+    Reset All Progress
+  </button>
+</div>
+
+</div>
+
+<script>
+
+const subjects = {
+
+Physics:{
+ icon:"⚡",
+ times:"11:00 PM – 12:00 AM"
+},
+
+Chemistry:{
+ icon:"🧪",
+ times:"12:15 AM – 1:15 AM"
+},
+
+" higher math":{
+ icon:"📐",
+ times:"1:30 AM – 2:30 AM"
+}
+
+};
+
+/*
+  30 DAY PLAN
+  Priority is based on study importance,
+  not a guarantee of exam questions.
+*/
+
+const plan=[
+
+[
+["Physics","গতি — Concept + Formula + Numerical","must"],
+["Chemistry","পদার্থের গঠন — Atomic structure","must"],
+["Higher Math","বীজগাণিতিক রাশি — Basic concepts","must"]
+],
+
+[
+["Physics","বল — Newton's laws + Numerical","must"],
+["Chemistry","পদার্থের গঠন — Electron configuration","must"],
+["Higher Math","বীজগাণিতিক রাশি — Factorization","must"]
+],
+
+[
+["Physics","বল — Momentum + Applications","must"],
+["Chemistry","পর্যায় সারণি — Periodic properties","must"],
+["Higher Math","বীজগাণিতিক রাশি — Algebraic problems","must"]
+],
+
+[
+["Physics","কাজ, ক্ষমতা ও শক্তি — Formula + Numerical","must"],
+["Chemistry","পর্যায় সারণি — Important trends","must"],
+["Higher Math","সমীকরণ — Quadratic equations","must"]
+],
+
+[
+["Physics","কাজ, ক্ষমতা ও শক্তি — Problems","must"],
+["Chemistry","রাসায়নিক বন্ধন — Ionic bond","must"],
+["Higher Math","সমীকরণ — Simultaneous equations","must"]
+],
+
+[
+["Physics","পদার্থের অবস্থা ও চাপ","imp"],
+["Chemistry","রাসায়নিক বন্ধন — Covalent bond","must"],
+["Higher Math","ত্রিকোণমিতি — Basic ratios","must"]
+],
+
+[
+["Physics","তাপের প্রভাব — Basic concepts","imp"],
+["Chemistry","রাসায়নিক বন্ধন — Structure","must"],
+["Higher Math","ত্রিকোণমিতি — Identities","must"]
+],
+
+[
+["Physics","তরঙ্গ ও শব্দ — Wave concepts","must"],
+["Chemistry","মোলের ধারণা — Mole calculation","must"],
+["Higher Math","ত্রিকোণমিতি — Problems","must"]
+],
+
+[
+["Physics","তরঙ্গ ও শব্দ — Numerical","must"],
+["Chemistry","রাসায়নিক গণনা — Numerical","must"],
+["Higher Math","সূচক — Laws of indices","must"]
+],
+
+[
+["Physics","আলোর প্রতিফলন — Laws + Ray diagram","must"],
+["Chemistry","রাসায়নিক বিক্রিয়া — Types","must"],
+["Higher Math","লগারিদম — Basic laws","must"]
+],
+
+[
+["Physics","আলোর প্রতিফলন — Problems","must"],
+["Chemistry","রাসায়নিক বিক্রিয়া — Equation balancing","must"],
+["Higher Math","লগারিদম — Problems","must"]
+],
+
+[
+["Physics","আলোর প্রতিসরণ — Laws + Diagram","must"],
+["Chemistry","রাসায়নিক বিক্রিয়া — Applications","must"],
+["Higher Math","দ্বিপদী বিস্তৃতি — Basic","must"]
+],
+
+[
+["Physics","আলোর প্রতিসরণ — Numerical","must"],
+["Chemistry","অ্যাসিড-ক্ষার — Concepts","must"],
+["Higher Math","দ্বিপদী বিস্তৃতি — Problems","must"]
+],
+
+[
+["Physics","স্থির বিদ্যুৎ — Charge + Field","must"],
+["Chemistry","অ্যাসিড-ক্ষার — pH + reactions","must"],
+["Higher Math","স্থানাঙ্ক জ্যামিতি — Distance","must"]
+],
+
+[
+["Physics","স্থির বিদ্যুৎ — Problems","must"],
+["Chemistry","অ্যাসিড-ক্ষার — Numerical","must"],
+["Higher Math","স্থানাঙ্ক জ্যামিতি — Section/Slope","must"]
+],
+
+[
+["Physics","চল বিদ্যুৎ — Current + Voltage","must"],
+["Chemistry","ধাতু ও অধাতু","imp"],
+["Higher Math","স্থানাঙ্ক জ্যামিতি — Equation of line","must"]
+],
+
+[
+["Physics","চল বিদ্যুৎ — Resistance","must"],
+["Chemistry","ধাতু — Extraction/basic reactions","imp"],
+["Higher Math","ভেক্টর — Basic concepts","must"]
+],
+
+[
+["Physics","চল বিদ্যুৎ — Circuit Numerical","must"],
+["Chemistry","জীবাশ্ম/জ্বালানি বিষয়ক অংশ","imp"],
+["Higher Math","ভেক্টর — Problems","must"]
+],
+
+[
+["Physics","চৌম্বক ক্রিয়া — Magnetic field","imp"],
+["Chemistry","রসায়ন ও শক্তি","imp"],
+["Higher Math","সম্ভাবনা — Basic probability","must"]
+],
+
+[
+["Physics","চৌম্বক ক্রিয়া — Applications","imp"],
+["Chemistry","আমাদের জীবনে রসায়ন","imp"],
+["Higher Math","সম্ভাবনা — Problems","must"]
+],
+
+[
+["Physics","আধুনিক পদার্থবিজ্ঞান — Basic concepts","imp"],
+["Chemistry","Chemistry Revision — Structure + Periodic table","must"],
+["Higher Math","Algebra Revision","must"]
+],
+
+[
+["Physics","আধুনিক পদার্থবিজ্ঞান — Important problems","imp"],
+["Chemistry","Chemistry Revision — Bonding + Reaction","must"],
+["Higher Math","Equation + Trigonometry Revision","must"]
+],
+
+[
+["Physics","Physics Revision — Mechanics","must"],
+["Chemistry","Chemistry Revision — Mole + Calculation","must"],
+["Higher Math","Log + Binomial Revision","must"]
+],
+
+[
+["Physics","Physics Revision — Wave + Optics","must"],
+["Chemistry","Chemistry Revision — Acid/Base","must"],
+["Higher Math","Coordinate + Vector Revision","must"]
+],
+
+[
+["Physics","Physics Revision — Electricity","must"],
+["Chemistry","Chemistry MCQ Practice","must"],
+["Higher Math","Probability + Mixed Problems","must"]
+],
+
+[
+["Physics","Physics CQ Practice","must"],
+["Chemistry","Chemistry CQ Practice","must"],
+["Higher Math","Higher Math CQ Practice","must"]
+],
+
+[
+["Physics","Physics MCQ + Formula Revision","must"],
+["Chemistry","Chemistry MCQ + Equation Revision","must"],
+["Higher Math","Higher Math MCQ Practice","must"]
+],
+
+[
+["Physics","Full Physics Mock Test","must"],
+["Chemistry","Weak Chapters Revision","must"],
+["Higher Math","Weak Topics Practice","must"]
+],
+
+[
+["Physics","Physics Mistake Revision","must"],
+["Chemistry","Full Chemistry Mock Test","must"],
+["Higher Math","Full Higher Math Mock Test","must"]
+],
+
+[
+["Physics","Final Formula + CQ/MCQ Revision","must"],
+["Chemistry","Final Equation + CQ/MCQ Revision","must"],
+["Higher Math","Final Formula + Wrong Problems","must"]
+]
+
+];
+
+let currentDay =
+Number(localStorage.getItem("currentDay")||1);
+
+let checked =
+JSON.parse(localStorage.getItem("checked")||"{}");
+
+function save(){
+ localStorage.setItem("currentDay",currentDay);
+ localStorage.setItem("checked",JSON.stringify(checked));
+ updateStats();
+}
+
+function makeDays(){
+
+ const nav=document.getElementById("dayNav");
+ nav.innerHTML="";
+
+ for(let i=1;i<=30;i++){
+
+   const b=document.createElement("button");
+
+   b.className="day-btn"+
+     (i===currentDay?" active":"");
+
+   b.textContent="Day "+i;
+
+   if(dayCompleted(i))
+     b.classList.add("done");
+
+   b.onclick=()=>{
+     currentDay=i;
+     localStorage.setItem("currentDay",i);
+     render();
+   };
+
+   nav.appendChild(b);
+ }
+}
+
+function dayCompleted(day){
+
+ const arr=plan[day-1];
+
+ return arr.every((_,i)=>
+   checked[`${day}-${i}`]
+ );
+}
+
+function render(){
+
+ makeDays();
+
+ document.getElementById("dayTitle").textContent=
+   "Day "+currentDay;
+
+ const schedule=document.getElementById("schedule");
+
+ schedule.innerHTML=`
+
+ <div class="subject">
+   <div class="icon">⚡</div>
+   <div>
+     <h3>Physics</h3>
+     <p>Concept → Formula → Numerical → MCQ</p>
+   </div>
+   <div class="time">11:00–12:00</div>
+ </div>
+
+ <div class="subject">
+   <div class="icon">🧪</div>
+   <div>
+     <h3>Chemistry</h3>
+     <p>Theory → Equation → MCQ</p>
+   </div>
+   <div class="time">12:15–1:15</div>
+ </div>
+
+ <div class="subject">
+   <div class="icon">📐</div>
+   <div>
+     <h3>Higher Math</h3>
+     <p>Concept → Examples → Practice</p>
+   </div>
+   <div class="time">1:30–2:30</div>
+ </div>
+
+ <div class="subject">
+   <div class="icon">🔁</div>
+   <div>
+     <h3>Quick Revision</h3>
+     <p>আজকের পড়া বই বন্ধ করে recall করো</p>
+   </div>
+   <div class="time">2:30–2:45</div>
+ </div>
+ `;
+
+ const box=document.getElementById("chapters");
+ box.innerHTML="";
+
+ plan[currentDay-1].forEach((item,index)=>{
+
+   const key=`${currentDay}-${index}`;
+
+   const div=document.createElement("div");
+
+   div.className="chapter";
+
+   div.innerHTML=`
+
+   <input
+    type="checkbox"
+    id="${key}"
+    ${checked[key]?"checked":""}
+   >
+
+   <label for="${key}">
+     ${item[0]} — ${item[1]}
+   </label>
+
+   <span class="priority ${
+     item[2]==="must"?"must":"imp"
+   }">
+     ${item[2]==="must"?"MUST":"IMPORTANT"}
+   </span>
+
+   `;
+
+   div.querySelector("input").onchange=e=>{
+
+     checked[key]=e.target.checked;
+
+     save();
+     render();
+
+   };
+
+   box.appendChild(div);
+
+ });
+
+ const target=document.getElementById("target");
+
+ target.value=
+   localStorage.getItem(`target-${currentDay}`)||"";
+
+ target.oninput=()=>{
+   localStorage.setItem(
+     `target-${currentDay}`,
+     target.value
+   );
+ };
+
+ updateStats();
+}
+
+function updateStats(){
+
+ let total=0;
+ let done=0;
+
+ plan.forEach((day,d)=>{
+
+   day.forEach((_,i)=>{
+
+     total++;
+
+     if(checked[`${d+1}-${i}`])
+       done++;
+
+   });
+
+ });
+
+ const percent=
+   Math.round(done/total*100);
+
+ document.getElementById("completeStat")
+   .textContent=percent+"%";
+
+ document.getElementById("chapterStat")
+   .textContent=done;
+
+ document.getElementById("dayStat")
+   .textContent=currentDay+"/30";
+
+ document.getElementById("progressBar")
+   .style.width=percent+"%";
+}
+
+/* TIMER */
+
+let seconds=3600;
+let timerInterval=null;
+
+function showTimer(){
+
+ let h=Math.floor(seconds/3600);
+ let m=Math.floor((seconds%3600)/60);
+ let s=seconds%60;
+
+ document.getElementById("timer").textContent=
+
+   h>0
+   ? `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
+   : `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+
+}
+
+function startTimer(){
+
+ if(timerInterval)return;
+
+ timerInterval=setInterval(()=>{
+
+   if(seconds>0){
+
+     seconds--;
+     showTimer();
+
+   }else{
+
+     clearInterval(timerInterval);
+     timerInterval=null;
+
+     alert("Focus session complete! 🔥");
+
+   }
+
+ },1000);
+
+}
+
+function pauseTimer(){
+
+ clearInterval(timerInterval);
+ timerInterval=null;
+
+}
+
+function resetTimer(){
+
+ pauseTimer();
+
+ seconds=3600;
+
+ showTimer();
+
+}
+
+function resetAll(){
+
+ if(!confirm(
+   "সব progress reset করতে চাও?"
+ ))return;
+
+ localStorage.clear();
+
+ currentDay=1;
+ checked={};
+
+ resetTimer();
+ render();
+
+}
+
+showTimer();
+render();
+
+</script>
+
+</body>
+</html>
